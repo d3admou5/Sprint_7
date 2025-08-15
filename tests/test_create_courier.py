@@ -1,36 +1,37 @@
 import pytest
 from helpers.courier_helper import generate_courier_data, create_courier
 
-
 required_fields = ["login", "password"]
 
-# 1. Курьера можно создать
-def test_create_courier_success(cleanup_courier):
-    courier_data = generate_courier_data()
-    response = create_courier(courier_data)
+class TestCourierCreation:
 
-    assert response.status_code == 201
-    assert response.json() == {"ok": True}
+    # 1. Курьера можно создать
+    def test_create_courier_success(self, cleanup_courier):
+        courier_data = generate_courier_data()
+        response = create_courier(courier_data)
 
-    cleanup_courier(courier_data["login"], courier_data["password"])
+        assert response.status_code == 201
+        assert response.json() == {"ok": True}
 
-# 2. Нельзя создать двух одинаковых курьеров
-def test_create_duplicate_courier(cleanup_courier):
-    courier_data = generate_courier_data()
-    create_courier(courier_data)                # первый раз
-    response = create_courier(courier_data)     # второй раз
+        cleanup_courier(courier_data["login"], courier_data["password"])
 
-    assert response.status_code == 409
-    assert "логин" in response.json()["message"].lower()
+    # 2. Нельзя создать двух одинаковых курьеров
+    def test_create_duplicate_courier(self, cleanup_courier):
+        courier_data = generate_courier_data()
+        create_courier(courier_data)                # первый раз
+        response = create_courier(courier_data)     # второй раз
 
-    cleanup_courier(courier_data["login"], courier_data["password"])
+        assert response.status_code == 409
+        assert "логин" in response.json()["message"].lower()
 
-# 3. Нельзя создать курьера без обязательных полей
-@pytest.mark.parametrize("missing_field", required_fields)
-def test_create_courier_missing_required_field(missing_field, cleanup_courier):
-    courier_data = generate_courier_data()
-    data = {k: v for k, v in courier_data.items() if k != missing_field}
-    response = create_courier(data)
+        cleanup_courier(courier_data["login"], courier_data["password"])
 
-    assert response.status_code == 400
-    assert "недостаточно данных" in response.json()["message"].strip().lower()
+    # 3. Нельзя создать курьера без обязательных полей
+    @pytest.mark.parametrize("missing_field", required_fields)
+    def test_create_courier_missing_required_field(self, missing_field):
+        courier_data = generate_courier_data()
+        data = {k: v for k, v in courier_data.items() if k != missing_field}
+        response = create_courier(data)
+
+        assert response.status_code == 400
+        assert "недостаточно данных" in response.json()["message"].strip().lower()
