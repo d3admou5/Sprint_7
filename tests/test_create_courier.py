@@ -1,37 +1,33 @@
 import pytest
-from helpers.courier_helper import generate_courier_data, create_courier
+from helpers.courier_data_helpers import generate_courier_data
+from methods.auth_methods import create_courier, login_courier
 
-required_fields = ["login", "password"]
 
 class TestCourierCreation:
 
     # 1. Курьера можно создать
-    def test_create_courier_success(self, cleanup_courier):
-        courier_data = generate_courier_data()
-        response = create_courier(courier_data)
+    def test_create_courier_success(self, courier):
+        login_resp = login_courier(courier["login"], courier["password"])
 
-        assert response.status_code == 201
-        assert response.json() == {"ok": True}
-
-        cleanup_courier(courier_data["login"], courier_data["password"])
+        assert login_resp.status_code == 200
+        assert "id" in login_resp.json()
+        assert isinstance(login_resp.json()["id"], int)
 
     # 2. Нельзя создать двух одинаковых курьеров
-    def test_create_duplicate_courier(self, cleanup_courier):
-        courier_data = generate_courier_data()
-        create_courier(courier_data)                # первый раз
-        response = create_courier(courier_data)     # второй раз
+    def test_create_duplicate_courier(self, courier):
+        duplicate_resp = create_courier(courier)
 
-        assert response.status_code == 409
-        assert "логин" in response.json()["message"].lower()
+        assert duplicate_resp.status_code == 409
+        assert duplicate_resp.json().get("message") == "Этот логин уже используется"
 
-        cleanup_courier(courier_data["login"], courier_data["password"])
-
-    # 3. Нельзя создать курьера без обязательных полей
-    @pytest.mark.parametrize("missing_field", required_fields)
+    # 3. Обязательные поля: login и password
+    @pytest.mark.parametrize("missing_field", ["login", "password"])
     def test_create_courier_missing_required_field(self, missing_field):
         courier_data = generate_courier_data()
-        data = {k: v for k, v in courier_data.items() if k != missing_field}
-        response = create_courier(data)
+        data = courier_data.copy()
+        data.pop(missing_field)  # убираем обязательное поле
 
-        assert response.status_code == 400
-        assert "недостаточно данных" in response.json()["message"].strip().lower()
+        resp = create_courier(data)
+
+        assert resp.status_code == 400
+        assert resp.json().get("message") == "Недостаточно данных для создания учетной записи"

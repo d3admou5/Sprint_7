@@ -1,18 +1,19 @@
 import pytest
-import requests
-from data.config_urls import LOGIN_COURIER_URL, DELETE_COURIER_URL
+from helpers.courier_data_helpers import generate_courier_data
+from methods.auth_methods import create_courier, login_courier, delete_courier
 
-# 1. Фикстура для удаления курьера после теста
+# 1. Фикстура для создания курьера и его удаления после тестов
 @pytest.fixture
-def cleanup_courier():
-
+def courier():
+    data = generate_courier_data()
+    resp = create_courier(data)
     courier_id = None
 
-    def _delete_courier(courier_login, courier_password):
-        nonlocal courier_id
-        login_resp = requests.post(LOGIN_COURIER_URL, json={"login": courier_login, "password": courier_password})
-        if login_resp.status_code == 200:
-            courier_id = login_resp.json().get("id")
-            requests.delete(DELETE_COURIER_URL.replace(":id", str(courier_id)))
+    if resp.status_code == 201:
+        login_resp = login_courier(data["login"], data["password"])
+        courier_id = login_resp.json().get("id")
 
-    yield _delete_courier
+    yield data
+
+    if courier_id:
+        delete_courier(courier_id)
