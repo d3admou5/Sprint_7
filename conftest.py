@@ -1,19 +1,15 @@
 import pytest
-from helpers.courier_data_helpers import generate_courier_data
-from methods.auth_methods import create_courier, login_courier, delete_courier
 
-# 1. Фикстура для создания курьера и его удаления после тестов
+from methods.auth_methods import delete_courier
+
+
+# 1. Фикстура для очистки данных курьера после тестов
 @pytest.fixture
-def courier():
-    data = generate_courier_data()
-    resp = create_courier(data)
-    courier_id = None
+def cleanup_courier():
+    created_ids = []
 
-    if resp.status_code == 201:
-        login_resp = login_courier(data["login"], data["password"])
-        courier_id = login_resp.json().get("id")
+    yield created_ids
 
-    yield data
-
-    if courier_id:
-        delete_courier(courier_id)
+    for courier_id in created_ids:
+        if courier_id:
+            delete_courier(courier_id)
