@@ -57,12 +57,27 @@
 └── README.md                               # Документация проекта
 ````
 ---
-### Запуск тестов
+## Просмотр отчёта Allure
+
+### Запуск тестов с генерацией результатов:
 ```
-pytest tests/ --alluredir=allure-results
+pytest --alluredir=./allure-results
 ```
-### Просмотр отчетов
-Для просмотра отчетов Allure, выполните следующие команды:
+### Генерация HTML-отчёта:
 ```
-allure serve allure-results
+allure generate ./allure-results -o ./allure-report --clean
+```
+### Просмотр отчёта в браузере:
+```
+allure serve ./allure-report
+```
+### Открыть готовый отчёт:
+```
+allure open ./allure-report
+```
+---
+## Установка зависимостей
+Для установки зависимостей используйте команду:
+```
+pip install -r requirements.txt
 ```
