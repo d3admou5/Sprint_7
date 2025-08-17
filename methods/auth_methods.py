@@ -1,22 +1,19 @@
 import requests
-from data.config_urls import BASE_URL
+from data.config_urls import CREATE_COURIER_URL, LOGIN_COURIER_URL, DELETE_COURIER_URL
 
 # 1. Создание курьера
 def create_courier(courier_data):
-    return requests.post(f"{BASE_URL}/api/v1/courier", json=courier_data)
+    return requests.post(CREATE_COURIER_URL, json=courier_data)
 
 
 # 2. Авторизация курьера
 def login_courier(login, password):
-    return requests.post(
-        f"{BASE_URL}/api/v1/courier/login",
-        json={"login": login, "password": password}
-    )
+    return requests.post(LOGIN_COURIER_URL, json={"login": login, "password": password})
 
 
 # 3. Удаление курьера
 def delete_courier(courier_id):
-    return requests.delete(f"{BASE_URL}/api/v1/courier/{courier_id}")
+    return requests.delete(f"{DELETE_COURIER_URL}/{courier_id}")
 
 
 # 4. Получить id курьера из ответа логина
