@@ -31,7 +31,7 @@ class TestCourierLogin:
         assert resp.status_code == 400
         assert "Недостаточно данных" in resp.json().get("message", "")
 
-    # 3-4. Авторизация не проходит для неверного логина или пароля
+    # 3-4. Авторизация не проходит для не существующего логина или пароля
     @pytest.mark.parametrize("login,password", get_invalid_login_cases())
     def test_authorization_fails_invalid_or_nonexistent_user(self, login, password):
         resp = login_courier(login, password)
