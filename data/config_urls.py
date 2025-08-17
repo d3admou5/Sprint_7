@@ -6,4 +6,4 @@ CREATE_COURIER_URL = f"{BASE_URL}/api/v1/courier"        # Создание ку
 LOGIN_COURIER_URL = f"{BASE_URL}/api/v1/courier/login"   # Авторизация курьера
 CREATE_ORDER_URL = f"{BASE_URL}/api/v1/orders"           # Создание заказа
 LIST_ORDERS_URL = f"{BASE_URL}/api/v1/orders"            # Получение списка заказов
-DELETE_COURIER_URL = f"{BASE_URL}/api/v1/courier/:id"    # Удаление курьера
+DELETE_COURIER_URL = f"{BASE_URL}/api/v1/courier/"    # Удаление курьера
