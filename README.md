@@ -61,19 +61,19 @@
 
 ### Запуск тестов с генерацией результатов:
 ```
-pytest --alluredir=./allure-results
+pytest --alluredir=./target/allure-results
 ```
 ### Генерация HTML-отчёта:
 ```
-allure generate ./allure-results -o ./allure-report --clean
+allure generate ./target/allure-results -o ./target/allure-report --clean
 ```
 ### Просмотр отчёта в браузере:
 ```
-allure serve ./allure-report
+allure serve ./target/allure-report
 ```
 ### Открыть готовый отчёт:
 ```
-allure open ./allure-report
+allure open ./target/allure-report
 ```
 ---
 ## Установка зависимостей
