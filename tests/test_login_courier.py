@@ -1,5 +1,5 @@
 import pytest
-from helpers.courier_data_helpers import generate_courier_data, get_invalid_login_cases
+from helpers.auth_data_helpers import generate_courier_data, get_invalid_login_cases
 from methods.auth_methods import create_and_assert, login_and_get_id, login_courier
 
 

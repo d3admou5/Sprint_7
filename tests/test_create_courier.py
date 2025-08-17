@@ -1,5 +1,5 @@
 import pytest
-from helpers.courier_data_helpers import generate_courier_data
+from helpers.auth_data_helpers import generate_courier_data
 from methods.auth_methods import create_courier, get_courier_id_by_credentials
 
 
