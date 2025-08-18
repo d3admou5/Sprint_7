@@ -28,26 +28,22 @@ class TestCourierCreation:
 
     @allure.title("Попытка создать дубликат курьера")
     @allure.description("Проверяем, что повторная попытка создать курьера с тем же логином возвращает 409")
-    def test_create_duplicate_courier(self, cleanup_courier):
-        with allure.step("Генерация нового курьера"):
-            courier = generate_courier_data()
+    def test_create_duplicate_courier(self, created_courier, cleanup_courier):
+        courier = created_courier["data"]
+        courier_id = created_courier["id"]
 
-        with allure.step("Создание курьера через API"):
-            create_resp = create_courier(courier)
-            assert create_resp.status_code == 201
+        cleanup_courier.append(courier_id)
 
         with allure.step("Попытка создать дубликат курьера"):
             duplicate_resp = create_courier(courier)
             assert duplicate_resp.status_code == 409
             assert "логин" in duplicate_resp.json().get("message", "")
 
-        with allure.step("Сохранение ID оригинального курьера для удаления"):
-            courier_id = get_courier_id_by_credentials(courier["login"], courier["password"])
-            cleanup_courier.append(courier_id)
-
     @allure.title("Создание курьера с отсутствующими обязательными полями")
     @pytest.mark.parametrize("missing_field", ["login", "password"])
     def test_create_courier_missing_required_field(self, missing_field):
+        from helpers.auth_data_helpers import generate_courier_data
+
         with allure.step(f"Генерация курьера и удаление поля {missing_field}"):
             courier_data = generate_courier_data()
             data = courier_data.copy()
