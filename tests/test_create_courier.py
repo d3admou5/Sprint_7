@@ -39,23 +39,21 @@ class TestCourierCreation:
         with allure.step("Попытка создать дубликат курьера"):
             duplicate_resp = create_courier(courier)
             assert duplicate_resp.status_code == 409
-            assert "логин" in duplicate_resp.json().get("message")
+            assert "логин" in duplicate_resp.json().get("message", "")
 
         with allure.step("Сохранение ID оригинального курьера для удаления"):
             courier_id = get_courier_id_by_credentials(courier["login"], courier["password"])
             cleanup_courier.append(courier_id)
 
+    @allure.title("Создание курьера с отсутствующими обязательными полями")
+    @pytest.mark.parametrize("missing_field", ["login", "password"])
+    def test_create_courier_missing_required_field(self, missing_field):
+        with allure.step(f"Генерация курьера и удаление поля {missing_field}"):
+            courier_data = generate_courier_data()
+            data = courier_data.copy()
+            data.pop(missing_field)
 
-@allure.feature("Курьер")
-@allure.title("Создание курьера с отсутствующими обязательными полями")
-@pytest.mark.parametrize("missing_field", ["login", "password"])
-def test_create_courier_missing_required_field(missing_field):
-    with allure.step(f"Генерация курьера и удаление поля {missing_field}"):
-        courier_data = generate_courier_data()
-        data = courier_data.copy()
-        data.pop(missing_field)
-
-    with allure.step("Попытка создать курьера с неполными данными"):
-        resp = create_courier(data)
-        assert resp.status_code == 400
-        assert "Недостаточно данных" in resp.json().get("message", "")
+        with allure.step("Попытка создать курьера с неполными данными"):
+            resp = create_courier(data)
+            assert resp.status_code == 400
+            assert "Недостаточно данных" in resp.json().get("message", "")
